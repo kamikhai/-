@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.8.8/brython.min.js">
+    </script>
+    <script type="text/python" ="">
+
+    </script>
+    <style>
+	*{
+	    font-family: sans-serif;
+	    font-weight: normal;
+	    font-size: 1.1em;
+	}
+	td{
+	    background-color: #ccc;
+	    padding: 10px 30px 10px 30px;
+	    border-radius: 0.2em;
+	    text-align: center;
+	    cursor: default;
+	}
+	#result{
+	    border-color: #000;
+	    border-width: 1px;
+	    border-style: solid;
+	    padding: 10px 30px 10px 30px;
+	    text-align: left;
+        width: 500px;
+        height: 35px;
+	}
+    </style>
+</head>
+
+<body onload="brython()">
+
+<script type="text/python">
+from browser import document, html
+from vector_model import VectorModel
+
+# Create the calc table
+calc = html.TABLE()
+
+# The display pad and C
+calc <= html.TR(html.TH(html.INPUT("0", id="result"), colspan=3) +
+                html.TD("Найти") + html.TD("Стереть"))
+
+# Add calc to the document
+document <= calc
+
+
+# Accessing the input numbers
+result = document["result"] # direct access to an element by its id
+
+# Click Event Handler
+def action(event):
+    """Handles the "click" event on a button of the calculator."""
+    # The element the user clicked on is the attribute "target" of the
+    # event object
+    element = event.target
+    # The text printed on the button is the element's "text" attribute
+    value = element.text
+    if value == "Стереть":
+        # reset
+        result.value = ""
+    elif value == "Найти":
+        # execute the formula in result zone
+        try:
+            result.value = VectorModel().search(result.value)
+        except:
+            result.value = "error"
+
+# Associate above function action() to the event "click" on all buttons
+for button in document.select("td"):
+    button.bind("click", action)
+
+</script>
+</body>
+</html>
